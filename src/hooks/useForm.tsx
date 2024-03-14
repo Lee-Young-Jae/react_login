@@ -59,6 +59,15 @@ const useForm = ({ initialState, validate, onSubmit }: useFormProps) => {
     onSubmit(values);
   };
 
+  const getFieldProps = (name: string) => {
+    return {
+      name: name,
+      value: values[name],
+      onChange: handleChange,
+      onBlur: handleBlur,
+    };
+  };
+
   useEffect(() => {
     const errors = validate(values);
     setErrors(errors);
@@ -71,6 +80,7 @@ const useForm = ({ initialState, validate, onSubmit }: useFormProps) => {
     handleBlur,
     handleChange,
     handleSubmit,
+    getFieldProps,
   };
 };
 
