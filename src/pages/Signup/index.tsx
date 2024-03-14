@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { setCookie } from "../utills/common";
-import useForm from "../hooks/useForm";
+import { setCookie } from "../../utills/common";
+import useForm from "../../hooks/useForm";
+import S from "./Style";
+import { useState } from "react";
 
 const SignupPage = () => {
   const navigate = useNavigate();
+
+  const [image, setImage] = useState<string | null>(null);
 
   const {
     errors,
@@ -19,7 +23,6 @@ const SignupPage = () => {
       password: "",
       passwordCheck: "",
       name: "",
-      image: "",
     },
     validate: (values) => {
       const errors: { [key: string]: string } = {};
@@ -62,17 +65,15 @@ const SignupPage = () => {
       return errors;
     },
     onSubmit: (values) => {
-      // TODO: 유효성 검증 로직을 작성한다.
-
-      if (values.image.length) {
-        const image = values.image.split("\\");
-        values.image = image[image.length - 1];
+      let imageName = "";
+      if (image) {
+        imageName = image.split(",")[1];
       }
       const newUser = {
         id: values.id,
         password: values.password,
         name: values.name,
-        image: values.image,
+        image: imageName,
         createdAt: new Date().toLocaleString(),
         updatedAt: new Date().toLocaleString(),
       };
@@ -82,14 +83,38 @@ const SignupPage = () => {
     },
   });
 
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (!file.type.includes("image")) {
+        alert("이미지 파일을 선택해주세요.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setImage(reader.result as string);
+      };
+    }
+  };
+
   return (
     <div>
-      <h2>회원 가입 페이지</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input type="file" {...getFieldProps("image")} />
-          <label htmlFor="image">이미지 업로드</label>
-        </div>
+      <S.ImageSection>
+        <S.ImageBox>
+          {image ? (
+            <img src={image} alt={values.image} />
+          ) : (
+            <p>이미지를 첨부해 주세요.</p>
+          )}
+        </S.ImageBox>
+        <label htmlFor="image-input">이미지 업로드</label>
+        <input id="image-input" type="file" onChange={handleImage} />
+      </S.ImageSection>
+
+      <S.Form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="id">아이디</label>
           <input
@@ -137,7 +162,7 @@ const SignupPage = () => {
         </div>
 
         <button type="submit">회원가입</button>
-      </form>
+      </S.Form>
     </div>
   );
 };
