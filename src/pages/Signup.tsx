@@ -17,6 +17,7 @@ const SignupPage = () => {
     initialState: {
       id: "",
       password: "",
+      passwordCheck: "",
       name: "",
       image: "",
     },
@@ -44,7 +45,11 @@ const SignupPage = () => {
       }
 
       if (!values.passwordCheck) {
-        errors.passwordCheck = "비밀번호와 일치하지 않습니다.";
+        errors.passwordCheck = "비밀번호를 다시 입력해주세요.";
+      }
+
+      if (values.password !== values.passwordCheck) {
+        errors.passwordCheck = "비밀번호가 일치하지 않습니다.";
       }
 
       if (!values.name) {
@@ -59,7 +64,20 @@ const SignupPage = () => {
     onSubmit: (values) => {
       // TODO: 유효성 검증 로직을 작성한다.
 
-      setCookie("userData", JSON.stringify(values), 30);
+      if (values.image.length) {
+        const image = values.image.split("\\");
+        values.image = image[image.length - 1];
+      }
+      const newUser = {
+        id: values.id,
+        password: values.password,
+        name: values.name,
+        image: values.image,
+        createdAt: new Date().toLocaleString(),
+        updatedAt: new Date().toLocaleString(),
+      };
+
+      setCookie("userData", JSON.stringify(newUser), 30);
       navigate("/");
     },
   });
@@ -81,6 +99,7 @@ const SignupPage = () => {
             value={values.id}
             onChange={handleChange}
             onBlur={handleBlur}
+            autoComplete="username"
             placeholder="ID를 입력해주세요."
           />
           {touched.id && errors.id && <div>{errors.id}</div>}
@@ -90,6 +109,7 @@ const SignupPage = () => {
           <input
             type="password"
             {...getFieldProps("password")}
+            autoComplete="new-password"
             placeholder="비밀번호를 입력해주세요."
           />
           {touched.password && errors.password && <div>{errors.password}</div>}
@@ -99,6 +119,7 @@ const SignupPage = () => {
           <input
             type="password"
             {...getFieldProps("passwordCheck")}
+            autoComplete="new-password"
             placeholder="비밀번호를 다시 입력해주세요."
           />
           {touched.passwordCheck && errors.passwordCheck && (
