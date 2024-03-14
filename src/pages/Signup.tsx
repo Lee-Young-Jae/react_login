@@ -36,6 +36,10 @@ const SignupPage = () => {
           errors.password = "연속된 숫자 3개 이상 입력할 수 없습니다.";
         }
 
+        if (!values.passwordCheck) {
+          errors.passwordCheck = "비밀번호와 일치하지 않습니다.";
+        }
+
         if (!values.name) {
           errors.name = "이름을 입력해주세요.";
         }
@@ -77,6 +81,7 @@ const SignupPage = () => {
             value={values.id}
             onChange={handleChange}
             onBlur={handleBlur}
+            placeholder="ID를 입력해주세요."
           />
           {touched.id && errors.id && <div>{errors.id}</div>}
         </div>
@@ -89,8 +94,24 @@ const SignupPage = () => {
             value={values.password}
             onChange={handleChange}
             onBlur={handleBlur}
+            placeholder="비밀번호를 입력해주세요."
           />
           {touched.password && errors.password && <div>{errors.password}</div>}
+        </div>
+        <div>
+          <label htmlFor="passwordCheck">비밀번호 확인</label>
+          <input
+            type="password"
+            id="passwordCheck"
+            name="passwordCheck"
+            value={values.passwordCheck}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            placeholder="비밀번호를 다시 입력해주세요."
+          />
+          {touched.passwordCheck && errors.passwordCheck && (
+            <div>{errors.passwordCheck}</div>
+          )}
         </div>
         <div>
           <label htmlFor="name">이름</label>
@@ -101,6 +122,7 @@ const SignupPage = () => {
             value={values.name}
             onChange={handleChange}
             onBlur={handleBlur}
+            placeholder="이름을 입력해주세요."
           />
           {touched.name && errors.name && <div>{errors.name}</div>}
         </div>
