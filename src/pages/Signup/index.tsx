@@ -7,8 +7,8 @@ import { validateSignupForm } from "../../utills/validation/validateSignupForm";
 
 const SignupPage = () => {
   const navigate = useNavigate();
-
   const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     errors,
@@ -26,22 +26,34 @@ const SignupPage = () => {
       name: "",
     },
     validate: validateSignupForm,
-    onSubmit: (values) => {
-      let imageName = "";
-      if (image) {
-        imageName = image.split(",")[1];
-      }
-      const newUser = {
-        id: values.id,
-        password: values.password,
-        name: values.name,
-        image: imageName,
-        createdAt: new Date().toLocaleString(),
-        updatedAt: new Date().toLocaleString(),
-      };
+    onSubmit: async (values) => {
+      if (loading) return;
+      setLoading(true);
 
-      setCookie("userData", JSON.stringify(newUser), 30);
-      navigate("/");
+      try {
+        let imageName = "";
+        if (image) {
+          imageName = image.split(",")[1];
+        }
+        const newUser = {
+          id: values.id,
+          password: values.password,
+          name: values.name,
+          image: imageName,
+          createdAt: new Date().toLocaleString(),
+          updatedAt: new Date().toLocaleString(),
+        };
+
+        // 가상의 1.5초 딜레이
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        setCookie("userData", JSON.stringify(newUser), 30);
+        navigate("/");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     },
   });
 
@@ -123,7 +135,7 @@ const SignupPage = () => {
           {touched.name && errors.name && <div>{errors.name}</div>}
         </div>
 
-        <button type="submit">회원가입</button>
+        <button type="submit">{loading ? <S.Loading /> : "회원가입"}</button>
       </S.Form>
     </div>
   );
