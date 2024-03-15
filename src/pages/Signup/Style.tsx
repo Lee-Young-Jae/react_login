@@ -21,24 +21,34 @@ const Loading = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.7rem;
   width: 300px;
   margin: 0 auto;
 
   div {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.3rem;
   }
 
   label {
-    font-size: 1.2rem;
   }
 
   input {
+    color: #fff;
+    background-color: #000;
+    border: none;
+    border-bottom: 2px solid #fff;
     padding: 0.5rem;
-    font-size: 1.2rem;
-    border-radius: 5px;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px #000 inset;
+      -webkit-text-fill-color: #fff;
+    }
   }
 
   button {
