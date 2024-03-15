@@ -140,6 +140,7 @@ const SignupPage = () => {
             type="text"
             {...getFieldProps("name")}
             placeholder="이름을 입력해주세요."
+            autoComplete="name"
           />
           {touched.name && errors.name && <div>{errors.name}</div>}
         </div>

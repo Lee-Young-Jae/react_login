@@ -61,7 +61,7 @@ const useForm = ({ initialState, validate, onSubmit }: useFormProps) => {
 
   const getFieldProps = (name: string) => {
     return {
-      name: name,
+      id: name,
       value: values[name],
       onChange: handleChange,
       onBlur: handleBlur,
