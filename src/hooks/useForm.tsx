@@ -61,6 +61,7 @@ const useForm = ({ initialState, validate, onSubmit }: useFormProps) => {
 
   const getFieldProps = (name: string) => {
     return {
+      name,
       id: name,
       value: values[name],
       onChange: handleChange,
