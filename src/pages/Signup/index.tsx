@@ -2,13 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { setCookie } from "../../utills/common";
 import useForm from "../../hooks/useForm";
 import S from "./Style";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { validateSignupForm } from "../../utills/validation/validateSignupForm";
 
 const SignupPage = () => {
   const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const imageRef = useRef<HTMLInputElement>(null);
 
   const {
     errors,
@@ -33,8 +35,9 @@ const SignupPage = () => {
       try {
         let imageName = "";
         if (image) {
-          imageName = image.split(",")[1];
+          imageName = imageRef.current?.files?.[0].name || "";
         }
+
         const newUser = {
           id: values.id,
           password: values.password,
@@ -51,6 +54,7 @@ const SignupPage = () => {
         navigate("/");
       } catch (error) {
         console.error(error);
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -85,7 +89,12 @@ const SignupPage = () => {
           )}
         </S.ImageBox>
         <label htmlFor="image-input">이미지 업로드</label>
-        <input id="image-input" type="file" onChange={handleImage} />
+        <input
+          ref={imageRef}
+          id="image-input"
+          type="file"
+          onChange={handleImage}
+        />
       </S.ImageSection>
 
       <S.Form onSubmit={handleSubmit}>
