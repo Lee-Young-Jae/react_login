@@ -1,31 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
-import { getCookie } from "../../utills/common";
 import useForm from "../../hooks/useForm";
 import { validateLoginForm } from "../../utills/validation/validateLoginForm";
-import { UserData } from "../../types/userData";
 import S from "./Style";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const fetchUserDataFromCookie: () => Promise<UserData> = async () => {
-  const userData = getCookie("userData");
-  if (!userData) {
-    throw new Error("유저 데이터가 존재하지 않습니다.");
-  }
-  return JSON.parse(userData);
-};
-
 const Login = () => {
-  const { data: userData } = useQuery<UserData, Error>({
-    queryKey: ["userDataKey"],
-    queryFn: fetchUserDataFromCookie,
-  });
-
   const navigate = useNavigate();
-
-  const { isLogin, setIsLogin } = useAuth();
-
+  const { isLogin, setIsLogin, userData } = useAuth();
   const { errors, getFieldProps, handleSubmit, touched, values } = useForm({
     initialState: {
       id: "",
@@ -44,7 +26,6 @@ const Login = () => {
 
       setIsLogin(true);
       // TODO: 마이페이지로 이동하도록 구현
-      console.log("로그인 성공");
       navigate("/example");
     },
   });
@@ -52,6 +33,8 @@ const Login = () => {
   useEffect(() => {
     if (isLogin) {
       // TODO: 마이페이지로 이동하도록 구현
+      alert("이미 로그인 중입니다. 마이페이지로 이동합니다.");
+      navigate("/example");
     }
   }, [isLogin]);
 

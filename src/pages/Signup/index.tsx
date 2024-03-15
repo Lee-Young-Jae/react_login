@@ -1,14 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { setCookie } from "../../utills/common";
 import useForm from "../../hooks/useForm";
 import S from "./Style";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateSignupForm } from "../../utills/validation/validateSignupForm";
+import { useAuth } from "../../hooks/useAuth";
 
 const SignupPage = () => {
   const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { mutateUserData, mutateSuccess } = useAuth();
 
   const imageRef = useRef<HTMLInputElement>(null);
 
@@ -47,19 +48,20 @@ const SignupPage = () => {
           updatedAt: new Date().toLocaleString(),
         };
 
-        // 가상의 1.5초 딜레이
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        setCookie("userData", JSON.stringify(newUser), 30);
-        navigate("/");
+        mutateUserData(newUser);
       } catch (error) {
         console.error(error);
-        console.log(error);
       } finally {
         setLoading(false);
       }
     },
   });
+
+  useEffect(() => {
+    if (mutateSuccess) {
+      navigate("/");
+    }
+  }, [mutateSuccess]);
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
