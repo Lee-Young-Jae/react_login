@@ -21,7 +21,7 @@ const Layout = ({ children }: LayoutProps) => {
   }, []);
 
   useEffect(() => {
-    if (windowWidth >= 770) {
+    if (windowWidth >= 770 || windowWidth <= 320) {
       throw new Error("모바일 화면에서만 사용 가능한 페이지입니다.");
     }
   }, [windowWidth]);
