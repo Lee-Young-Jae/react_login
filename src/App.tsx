@@ -24,7 +24,6 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/mypage" element={<MyPage />} />
-            <Route path="/example" element={<Example />} />
           </Routes>
         </Layout>
       </AuthProvider>
@@ -34,27 +33,3 @@ function App() {
 }
 
 export default App;
-
-function Example() {
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["repoData"],
-    queryFn: () =>
-      fetch("https://api.github.com/repos/TanStack/query").then((res) =>
-        res.json()
-      ),
-  });
-
-  if (isLoading) return "Loading...";
-
-  if (error) return "An error has occurred: " + error.message;
-
-  return (
-    <div>
-      <h1>{data.name}</h1>
-      <p>{data.description}</p>
-      <strong>👀 {data.subscribers_count}</strong>{" "}
-      <strong>✨ {data.stargazers_count}</strong>{" "}
-      <strong>🍴 {data.forks_count}</strong>
-    </div>
-  );
-}
