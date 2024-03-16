@@ -2,12 +2,13 @@ import useForm from "../../hooks/useForm";
 import { validateLoginForm } from "../../utills/validation/validateLoginForm";
 import S from "./Style";
 import { useAuth } from "../../hooks/useAuth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
   const { isLogin, setIsLogin, userData } = useAuth();
+  const [failCount, setFailCount] = useState(0);
   const { errors, getFieldProps, handleSubmit, touched, values } = useForm({
     initialState: {
       id: "",
@@ -17,10 +18,13 @@ const Login = () => {
     onSubmit: () => {
       if (values.id !== userData?.id) {
         alert("존재하지 않는 아이디입니다.");
+        setFailCount((prev) => prev + 1);
+
         return;
       }
       if (values.password !== userData?.password) {
         alert("비밀번호가 일치하지 않습니다.");
+        setFailCount((prev) => prev + 1);
         return;
       }
 
@@ -28,6 +32,12 @@ const Login = () => {
       navigate("/mypage");
     },
   });
+
+  useEffect(() => {
+    if (failCount >= 3) {
+      throw new Error("너무 많은 시도로 인해 로그인이 불가능합니다.");
+    }
+  }, [failCount]);
 
   useEffect(() => {
     if (isLogin) {

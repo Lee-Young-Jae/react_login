@@ -34,8 +34,7 @@ const MyPage = () => {
       }
 
       if (!userData) {
-        //TODO: 서버오류
-        return;
+        throw new Error("사용자 정보가 없어요.");
       }
 
       mutateUserData({
