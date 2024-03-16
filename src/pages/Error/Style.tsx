@@ -7,6 +7,7 @@ const Container = styled.div`
   height: 100vh;
   background: #000;
   color: #fff;
+  overflow: hidden;
 `;
 
 const Content = styled.div`
