@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Layout from "./components/Layout";
 import AuthProvider from "./hooks/useAuth";
+import MyPage from "./pages/Mypage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/mypage" element={<MyPage />} />
             <Route path="/example" element={<Example />} />
           </Routes>
         </Layout>
