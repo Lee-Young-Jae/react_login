@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import S from "./Style";
@@ -6,8 +6,10 @@ import useForm from "../../hooks/useForm";
 
 const MyPage = () => {
   const { userData, isLogin, setIsLogin, mutateUserData } = useAuth();
+  const [image, setImage] = useState<string | null>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
 
-  const { values, getFieldProps, errors, handleSubmit, touched } = useForm({
+  const { values, getFieldProps, errors, handleSubmit } = useForm({
     initialState: {
       name: userData?.name || "",
     },
@@ -16,10 +18,6 @@ const MyPage = () => {
 
       if (!values.name) {
         errors.name = "빈 이름을 등록할 수 없어요.";
-      }
-
-      if (values.name === userData?.name && touched.name) {
-        errors.name = "기존 이름과 동일해요.";
       }
 
       if (values.name.length > 5) {
@@ -37,14 +35,39 @@ const MyPage = () => {
         throw new Error("사용자 정보가 없어요.");
       }
 
-      mutateUserData({
+      let imageName = "";
+      if (image) {
+        imageName = imageRef.current?.files?.[0].name || "";
+      }
+
+      const newUser = {
         ...userData,
+        image: imageName,
         name: values.name,
         updatedAt: new Date().toLocaleString(),
-      });
+      };
+
+      mutateUserData(newUser);
     },
   });
   const navigate = useNavigate();
+
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (!file.type.includes("image")) {
+        alert("이미지 파일을 선택해주세요.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setImage(reader.result as string);
+      };
+    }
+  };
 
   const handleLogout = () => {
     setIsLogin(false);
@@ -67,7 +90,22 @@ const MyPage = () => {
 
   return (
     <S.Container>
-      <S.ImageSection>{userData.image}</S.ImageSection>
+      <S.ImageSection>
+        <S.ImageBox>
+          {image ? (
+            <img src={image} alt={values.image} />
+          ) : (
+            <p>{userData.image}</p>
+          )}
+        </S.ImageBox>
+        <label htmlFor="image-input">이미지 업로드</label>
+        <input
+          ref={imageRef}
+          id="image-input"
+          type="file"
+          onChange={handleImage}
+        />
+      </S.ImageSection>
       <S.Form onSubmit={handleSubmit}>
         <span>안녕하세요,</span>
         <span>

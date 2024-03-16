@@ -11,15 +11,40 @@ const Container = styled.div`
 const ImageSection = styled.section`
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
+
+  label {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+    color: #000;
+    border-radius: 5px;
+  }
+  input {
+    display: none;
+  }
+`;
+
+const ImageBox = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  gap: 1rem;
   align-items: center;
   justify-content: center;
   width: 300px;
   height: 200px;
   border-radius: 5px;
-  text-align: center;
-  border: 1px solid #fff;
-`;
 
+  border: 1px solid #fff;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -63,6 +88,7 @@ const S = {
   Buttons,
   Form,
   Error,
+  ImageBox,
 };
 
 export default S;
