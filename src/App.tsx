@@ -12,17 +12,20 @@ import "./App.css";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Layout from "./components/Layout";
+import AuthProvider from "./hooks/useAuth";
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/example" element={<Example />} />
-        </Routes>
-      </Layout>
+      <AuthProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/example" element={<Example />} />
+          </Routes>
+        </Layout>
+      </AuthProvider>
       <ReactQueryDevtools client={queryClient}></ReactQueryDevtools>
     </QueryClientProvider>
   );
