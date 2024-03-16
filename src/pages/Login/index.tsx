@@ -25,16 +25,14 @@ const Login = () => {
       }
 
       setIsLogin(true);
-      // TODO: 마이페이지로 이동하도록 구현
-      navigate("/example");
+      navigate("/mypage");
     },
   });
 
   useEffect(() => {
     if (isLogin) {
-      // TODO: 마이페이지로 이동하도록 구현
       alert("이미 로그인 중입니다. 마이페이지로 이동합니다.");
-      navigate("/example");
+      navigate("/mypage");
     }
   }, [isLogin]);
 
