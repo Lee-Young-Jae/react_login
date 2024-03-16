@@ -30,9 +30,37 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [errorCount, setErrorCount] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
-
   const queryClient = useQueryClient();
+
+  const fetchUserDataFromCookie: () => Promise<UserData> = async () => {
+    try {
+      const userData = getCookie("userData");
+      if (!userData) {
+        return {};
+      }
+      const parsedUserData = JSON.parse(userData);
+      return parsedUserData;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const updateUser = async (newUserData: UserData) => {
+    try {
+      setCookie("userData", JSON.stringify(newUserData), 30);
+
+      setErrorCount((prev) => prev + 1);
+      if (errorCount >= 3) {
+        setErrorCount(0);
+        throw new Error("통신에러, 너무 많은 요청을 보냈어요.");
+      }
+    } catch (error) {
+      throw error;
+    }
+    return newUserData;
+  };
 
   useEffect(() => {
     const userDataString = getCookie("userData");
@@ -50,11 +78,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     queryKey: ["userDataKey"],
     queryFn: fetchUserDataFromCookie,
   });
-
-  const updateUser = async (newUserData: UserData) => {
-    setCookie("userData", JSON.stringify(newUserData), 30);
-    return newUserData;
-  };
 
   const { mutate, isSuccess } = useMutation<UserData, Error, UserData>({
     mutationFn: updateUser,
@@ -78,18 +101,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-const fetchUserDataFromCookie: () => Promise<UserData> = async () => {
-  try {
-    const userData = getCookie("userData");
-    if (!userData) {
-      throw new Error("유저 데이터가 존재하지 않습니다.");
-    }
-    return JSON.parse(userData);
-  } catch (error) {
-    throw new Error("사용자 데이터를 가져오는 중에 오류가 발생했습니다.");
-  }
 };
 
 export default AuthProvider;
