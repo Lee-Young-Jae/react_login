@@ -1,7 +1,10 @@
 import { useState, useContext, createContext, useEffect } from "react";
 import { UserData } from "../types/userData";
 import { getCookie, setCookie } from "../utills/common";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { queryClient } from "../App";
+import { useNavigate } from "react-router-dom";
+import CustomError from "../types/customError";
 
 type AuthContextType = {
   isLogin: boolean;
@@ -29,10 +32,92 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
+let errorCount = 0;
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate();
 
-  const queryClient = useQueryClient();
+  const fetchUserDataFromCookie: () => Promise<UserData> = async () => {
+    try {
+      const userData = getCookie("userData");
+      if (!userData) {
+        const newError = new Error("사용자 정보가 없어요.") as CustomError;
+        newError.info = {
+          code: 403,
+          message: "사용자 정보가 없어요.",
+          status: 403,
+        };
+        throw newError;
+      }
+
+      const parsedUserData = JSON.parse(userData);
+
+      return parsedUserData;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        navigate("/error", {
+          state: { error: error.info },
+        });
+      } else {
+        const newError = new CustomError("알 수 없는 오류입니다.");
+        newError.info = {
+          code: 500,
+          message: "알 수 없는 오류입니다.",
+          status: 500,
+        };
+
+        navigate("/error", {
+          state: { error: newError.info },
+        });
+      }
+    }
+  };
+
+  const updateUser = async (newUserData: UserData) => {
+    try {
+      setCookie("userData", JSON.stringify(newUserData), 30);
+
+      if (newUserData.name === "test") {
+        const newError = new CustomError("이름은 test로 등록할 수 없어요.");
+        newError.info = {
+          code: 403,
+          message: "이름은 test로 등록할 수 없어요.",
+          status: 403,
+        };
+
+        throw newError;
+      }
+
+      if (errorCount < 3) {
+        errorCount++;
+        const newError = new CustomError("서버 오류입니다.");
+        newError.info = {
+          code: 500,
+          message: "서버 오류입니다.",
+          status: 500,
+        };
+        throw newError;
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        navigate("/error", {
+          state: { error: error.info },
+        });
+      } else {
+        const newError = new CustomError("알 수 없는 오류입니다.");
+        newError.info = {
+          code: 500,
+          message: "알 수 없는 오류입니다.",
+          status: 500,
+        };
+
+        navigate("/error", {
+          state: { error: newError.info },
+        });
+      }
+    }
+    return newUserData;
+  };
 
   useEffect(() => {
     const userDataString = getCookie("userData");
@@ -46,17 +131,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     data: userData,
     isError,
     isLoading,
-  } = useQuery<UserData, Error>({
+  } = useQuery<UserData, CustomError>({
     queryKey: ["userDataKey"],
     queryFn: fetchUserDataFromCookie,
   });
 
-  const updateUser = async (newUserData: UserData) => {
-    setCookie("userData", JSON.stringify(newUserData), 30);
-    return newUserData;
-  };
-
-  const { mutate, isSuccess } = useMutation<UserData, Error, UserData>({
+  const { mutate, isSuccess } = useMutation<UserData, CustomError, UserData>({
     mutationFn: updateUser,
     onSuccess: (newUserData: UserData) => {
       queryClient.setQueryData(["userDataKey"], newUserData);
@@ -78,18 +158,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-const fetchUserDataFromCookie: () => Promise<UserData> = async () => {
-  try {
-    const userData = getCookie("userData");
-    if (!userData) {
-      throw new Error("유저 데이터가 존재하지 않습니다.");
-    }
-    return JSON.parse(userData);
-  } catch (error) {
-    throw new Error("사용자 데이터를 가져오는 중에 오류가 발생했습니다.");
-  }
 };
 
 export default AuthProvider;
