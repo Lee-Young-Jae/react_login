@@ -61,6 +61,7 @@ const MyPage = () => {
 
   const handleLogout = () => {
     setIsLogin(false);
+    navigate("/");
   };
 
   useEffect(() => {
@@ -69,10 +70,6 @@ const MyPage = () => {
       navigate("/");
     }
   }, [isLogin, navigate]);
-
-  if (!isLogin) {
-    return null;
-  }
 
   if (!userData) {
     return null;
