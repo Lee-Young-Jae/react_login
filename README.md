@@ -1,5 +1,7 @@
 # React Query 를 사용한 회원 가입 페이지 구현
 
+[🤖Demo](https://react-login-lee-young-jae.vercel.app/)
+
 ## 🛠️ 기술 스택
 
 TypeScript, React, Styled-Components
@@ -12,6 +14,40 @@ $ npm install
 
 # 개발 서버 실행
 $ npm start
+```
+
+## 📚 폴더구조
+
+```bash
+📦src
+ ┣ 📂components
+ ┃ ┗ 📂Layout
+ ┃ ┃ ┣ 📜Style.tsx
+ ┃ ┃ ┗ 📜index.tsx
+ ┣ 📂hooks
+ ┃ ┣ 📜useAuth.tsx
+ ┃ ┗ 📜useForm.tsx
+ ┣ 📂pages
+ ┃ ┣ 📂Error
+ ┃ ┃ ┣ 📜Style.tsx
+ ┃ ┃ ┗ 📜index.tsx
+ ┃ ┣ 📂Login
+ ┃ ┃ ┣ 📜Style.tsx
+ ┃ ┃ ┗ 📜index.tsx
+ ┃ ┣ 📂Mypage
+ ┃ ┃ ┣ 📜Style.tsx
+ ┃ ┃ ┗ 📜index.tsx
+ ┃ ┗ 📂Signup
+ ┃ ┃ ┣ 📜Style.tsx
+ ┃ ┃ ┗ 📜index.tsx
+ ┣ 📂types
+ ┃ ┗ 📜userData.ts
+ ┣ 📂utills
+ ┃ ┣ 📂validation
+ ┃ ┃ ┣ 📜validateLoginForm.ts
+ ┃ ┃ ┣ 📜validateMyPageForm.ts
+ ┃ ┃ ┗ 📜validateSignupForm.ts
+ ┃ ┗ 📜common.ts
 ```
 
 ## 📚 기능
@@ -51,3 +87,11 @@ $ npm start
 - [x] 쿠키에 저장된 회원 정보를 조회한다.
 - [x] ID, 이름, 가입일시, 수정일시를 출력한다.
   - [x] 이름은 수정이 가능하다.
+
+## ⌨️ 이런걸 했어요
+
+### 이 프로젝트에서 집중한 부분
+
+서비스 품질을 높이기 위해 에러 핸들링을 중점삼아 고민했습니다. 선언적으로 에러를 관리하고, UI가 깨지지 않도록 **Error Boundary**를 사용하여 전역 에러를 핸들링했습니다.
+
+중복되는 코드를 줄이기 위해 **Custom Hook**을 사용하여 로직을 분리했습니다. 실제로 useForm 커스텀 훅은 회원가입 페이지와 로그인 페이지, 그리고 회원 정보 조회 페이지에서 사용되며, 각각의 페이지에서 필요한 로직을 커스텀 훅으로 분리하여 재사용성을 크게 높였습니다.
