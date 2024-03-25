@@ -1,4 +1,4 @@
-# React Query 를 사용한 회원 가입 페이지 구현
+# React Query 를 사용한 회원 가입 페이지를 구현하는 미션
 
 [🤖Demo](https://react-login-lee-young-jae.vercel.app/)
 
